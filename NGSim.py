@@ -10,8 +10,10 @@ def main():
 	file = open("out.xyz", "w")
 	file.write(str(inp.x**3)+ "\n")
 	file.write("\n")
+	file.close()
 
 	cristal.MakeMomentum(273)
+	cristal.MakeForces()
 		
 
 
