@@ -55,13 +55,21 @@ class Argon:
 
 	def MakeForces(self):
 		#add van der Waales force  
-		ep = 1
-		R = 0.5
+		ep = 1	#!!!! to input !!!!
+		R = 0.5	#!!!! to input !!!!
 		rest = self.particles.copy()
 		for i_par in self.particles:
 			rest.remove(i_par)
 			for j_par in rest:
 				r_ij = np.subtract(i_par.r(),j_par.r())
 				r_norm = np.linalg.norm(r_ij)
-				i_par.setForce(np.add(i_par.F(), 12*ep*((R/r_norm)**12-(R/r_norm)**6)*(r_ij/r_norm**2)))
-				j_par.setForce(np.add(j_par.F(), -12*ep*((R/r_norm)**12-(R/r_norm)**6)*(r_ij/r_norm**2)))
+				i_par.setForce(np.add(i_par.F(),  np.dot(12*ep*((R/r_norm)**12-(R/r_norm)**6)*(1/r_norm**2),r_ij)))
+				j_par.setForce(np.add(j_par.F(), -np.dot(12*ep*((R/r_norm)**12-(R/r_norm)**6)*(1/r_norm**2),r_ij)))
+
+		#add virtual vessel
+		L = 1	#!!!! to input !!!!
+		f = 1	#!!!! to input !!!!
+		for par in self.particles:
+			r = np.linalg.norm(par.r())
+			if r >= L:
+				par.setForce(np.add(par.F(),np.dot((f*(L -r))/(r),par.r())))
