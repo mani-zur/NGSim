@@ -14,7 +14,9 @@ def main():
 
 	cristal.MakeMomentum(inp.T_0)
 	cristal.MakeForces(inp.L, inp.f, inp.R)
-	cristal.Simulate(inp.tau)
+	for i in range(1000):
+		print(cristal.CalculateTemperature(), cristal.CalculatePressure(inp.L, inp.f))
+		cristal.Simulate(inp.tau)
 		
 
 
