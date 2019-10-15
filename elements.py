@@ -1,16 +1,16 @@
 import numpy as np
 import random
 from particle import Particle
+import input as inp
 
 class Argon:
 	__kB = 1.3806 * 10 ** (-23) #Boltzman constant
 	__m = 39.95 #argon atomic mass
 
 
-	def __init__(self, N):
+	def __init__(self, N, a):
 		self.particles = []
 		self.N = N
-		a = 1
 		b0 = [a , 0 , 0]
 		b1 = [a/2, (a*np.sqrt(3))/2, 0]
 		b2 = [a/2, (a*np.sqrt(3))/6, (a*np.sqrt(2./3))]
@@ -21,7 +21,7 @@ class Argon:
 			for i1 in range(N):
 				for i2 in range(N):
 					r = np.dot(i0 - h, b0) + np.dot(i1 - h, b1) + np.dot(i2 - h, b2)
-					self.particles.append(Particle("Ar",r[0],r[1],r[2]))
+					self.particles.append(Particle("Ar",r))
 
 	def MakeMomentum(self, T0):
 		E_sum = 0 # sum of energy
@@ -33,11 +33,11 @@ class Argon:
 		#Calculate momentum from enegy and apply norm_factor
 
 		for par in self.particles:
-			par.setMomentum(
+			par.setMomentum([
 				random.choice([-1,1])*np.sqrt(2*self.__m*par.px * norm_factor), 
 				random.choice([-1,1])*np.sqrt(2*self.__m*par.py * norm_factor), 
 				random.choice([-1,1])*np.sqrt(2*self.__m*par.pz * norm_factor)
-				)
+			])
 		#Remowe momvement in all axis
 		sum_px = 0 
 		sum_py = 0
@@ -47,11 +47,11 @@ class Argon:
 			sum_py += par.py
 			sum_pz += par.pz
 		for par in self.particles: #apply correction
-			par.setMomentum(
+			par.setMomentum([
 				par.px - sum_px/self.N**3,
 				par.py - sum_py/self.N**3,
 				par.pz - sum_pz/self.N**3
-			)
+			])
 
 	def CalculatePressure(self, L , f):
 		p = 0
@@ -61,10 +61,9 @@ class Argon:
 				p += np.linalg.norm(np.dot((f*(L -r))/(r),par.r()))
 		return p
 
-	def MakeForces(self, L, f):
+	def MakeForces(self, L, f, R):	 #this should be changed variable to __init__
 		#add van der Waales force  
 		ep = 1	#!!!! to input !!!!
-		R = 0.5	#!!!! to input !!!!
 		rest = self.particles.copy()
 		for i_par in self.particles:
 			rest.remove(i_par)
@@ -79,3 +78,12 @@ class Argon:
 			r = np.linalg.norm(par.r())
 			if r >= L:
 				par.setForce(np.add(par.F(),np.dot((f*(L -r))/(r),par.r())))
+
+	def Simulate(self, tau):
+		for par in self.particles:
+			print(par.r())
+			par.setMomentum(np.add(par.p(),np.dot(0.5*tau,par.F())))
+			par.setPosition(np.add(par.r(),np.dot(tau/self.__m,par.p())))
+			self.MakeForces(inp.L, inp.f, inp.R) #this should be changed 	variable from self
+			par.setMomentum(np.add(par.p(),np.dot(0.5*tau,par.F())))
+			print (par.r())
