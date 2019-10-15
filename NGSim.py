@@ -13,7 +13,7 @@ def main():
 	file.close()
 
 	cristal.MakeMomentum(273)
-	cristal.MakeForces()
+	cristal.MakeForces(1,1)
 		
 
 

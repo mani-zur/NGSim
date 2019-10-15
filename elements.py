@@ -53,7 +53,15 @@ class Argon:
 				par.pz - sum_pz/self.N**3
 			)
 
-	def MakeForces(self):
+	def CalculatePressure(self, L , f):
+		p = 0
+		for par in self.particles:
+			r = np.linalg.norm(par.r())
+			if r >= L:
+				p += np.linalg.norm(np.dot((f*(L -r))/(r),par.r()))
+		return p
+
+	def MakeForces(self, L, f):
 		#add van der Waales force  
 		ep = 1	#!!!! to input !!!!
 		R = 0.5	#!!!! to input !!!!
@@ -67,8 +75,6 @@ class Argon:
 				j_par.setForce(np.add(j_par.F(), -np.dot(12*ep*((R/r_norm)**12-(R/r_norm)**6)*(1/r_norm**2),r_ij)))
 
 		#add virtual vessel
-		L = 1	#!!!! to input !!!!
-		f = 1	#!!!! to input !!!!
 		for par in self.particles:
 			r = np.linalg.norm(par.r())
 			if r >= L:
