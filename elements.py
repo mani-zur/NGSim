@@ -23,6 +23,12 @@ class Argon:
 					r = np.dot(i0 - h, b0) + np.dot(i1 - h, b1) + np.dot(i2 - h, b2)
 					self.particles.append(Particle("Ar",r))
 
+	def __str__(self):
+		out = ""
+		for par in self.particles:
+			out += str(par)
+		return out
+
 	def MakeMomentum(self, T0):
 		E_sum = 0 # sum of energy
 		for par in self.particles:
