@@ -35,7 +35,7 @@ class Argon:
 			par.setMomentum(maxwell=True)
 			E_sum += par.px + par.py + par.pz
 		#Renormalize to get E = 0.5*kb*T 
-		norm_factor = (0.5 * self.__kB * T0) / E_sum #normalization factor
+		norm_factor = (1.5 * self.__kB * T0 * self.N) / E_sum #normalization factor
 		#Calculate momentum from enegy and apply norm_factor
 
 		for par in self.particles:
@@ -86,8 +86,9 @@ class Argon:
 			for j_par in rest:
 				r_ij = np.subtract(i_par.r(),j_par.r())
 				r_norm = np.linalg.norm(r_ij)
-				i_par.setForce(np.add(i_par.F(),  np.dot(12*ep*((R/r_norm)**12-(R/r_norm)**6)/r_norm**2,r_ij)))
-				j_par.setForce(np.add(j_par.F(), np.dot(-12*ep*((R/r_norm)**12-(R/r_norm)**6)/r_norm**2,r_ij)))
+				F = np.dot(12*ep*((R/r_norm)**12-(R/r_norm)**6)/r_norm**2,r_ij)
+				i_par.setForce(np.add(i_par.F(),  F))
+				j_par.setForce(np.add(j_par.F(), -F))
 
 		#add virtual vessel
 		for par in self.particles:

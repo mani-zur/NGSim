@@ -16,8 +16,8 @@ def main():
 
 	cristal.MakeMomentum(inp.T_0)
 	cristal.MakeForces(inp.L, inp.f, inp.R)
-	for i in range(100):
-		print(cristal.CalculateTemperature(), cristal.CalculatePressure(inp.L, inp.f))
+	for i in range(1000):
+		#print(cristal.CalculateTemperature(), cristal.CalculatePressure(inp.L, inp.f))
 		cristal.Simulate(inp.tau)
 		file.write(str(inp.x**3)+ "\n")
 		file.write("\n")
